@@ -1,0 +1,242 @@
+/* =========================================================
+   BLOCO 1: RESET E CONFIGURAÇÕES GLOBAIS
+   ========================================================= */
+/* Remove margens/espaçamentos padrão dos navegadores, ajusta o cálculo de tamanho (border-box) e define a fonte 'Playfair' para toda a página */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Playfair', serif;
+}
+
+/* Sobrescreve a fonte serifada apenas no botão e na gaveta lateral, usando Arial para facilitar a leitura dos números da tabela */
+.menu-btn, .sidebar, .sidebar * {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Centraliza todo o conteúdo, dá um respiro nas bordas e aplica o fundo azul-claro */
+body {
+  text-align: center;
+  padding: 15px;
+  background-color: #82cae0;
+}
+
+/* =========================================================
+   BLOCO 2: CABEÇALHO E RODAPÉ (TÍTULO E DATA/HORA)
+   ========================================================= */
+/* Usa 'clamp()' para que o texto aumente ou diminua suavemente conforme o tamanho da tela (entre 22px e 35px). O padding lateral evita que o texto bata no botão do menu */
+.titulo-principal, .data-hora {
+  color: #2631cc;
+  font-weight: bold;
+  font-size: clamp(22px, 4vw, 35px);
+  margin: 15px 0;
+  padding: 0 55px;
+}
+
+/* =========================================================
+   BLOCO 3: GRADE DOS MEDIDORES (GAUGES)
+   ========================================================= */
+/* Centraliza a tabela dos 4 relógios e limita a largura máxima a 540px no computador */
+.tabela-medidores {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  max-width: 540px;
+  margin: 5px auto;
+  border-collapse: collapse;
+  box-shadow: none;
+}
+
+/* Divide a tabela em duas colunas iguais (50% cada) */
+.tabela-medidores td {
+  width: 50%;
+  border: none;
+  padding: 5px 10px;
+  text-align: center;
+  position: relative;
+}
+
+/* Garante que os gráficos (<canvas>) se ajustem ao espaço, mudem o cursor para "mãozinha" e tenham animação suave ao receber zoom/foco */
+.tabela-medidores canvas {
+  max-width: 100%;
+  height: auto !important;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.35s ease;
+}
+
+/* =========================================================
+   BLOCO 4: BOTÃO DO MENU E GAVETA LATERAL (SIDEBAR)
+   ========================================================= */
+/* Fixa o botão azul no canto superior esquerdo (z-index 900 mantém ele acima do conteúdo comum) */
+.menu-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 48px;
+  height: 48px;
+  font-size: 26px;
+  line-height: 48px;
+  text-align: center;
+  background-color: #2b579a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 900;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Escurece o botão quando o mouse passa por cima */
+.menu-btn:hover {
+  background-color: #1e3f73;
+}
+
+/* Cria a gaveta lateral oculta (width: 0) que desliza da esquerda em 0.4s quando o JS altera sua largura. O z-index 1000 coloca ela na frente de tudo */
+.sidebar {
+  height: 100%;
+  width: 0; /* Começa fechado */
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: #3d63e2;
+  color: white;
+  overflow-x: hidden;
+  transition: 0.4s;
+  padding-top: 60px;
+  text-align: center;
+}
+
+/* Estiliza o título interno da gaveta */
+.sidebar h2 {
+  margin-bottom: 15px;
+  color: #0f1216;
+  padding: 0 15px;
+}
+
+/* Posiciona o 'X' de fechar no canto superior direito da gaveta */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 36px;
+  color: rgb(5, 4, 4);
+  text-decoration: none;
+}
+
+/* Estiliza o botão verde-limão "+ Salvar Leitura Atual" */
+.btn-salvar {
+  background-color: #cbe945;
+  color: rgb(3, 1, 1);
+  border: none;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-salvar:hover {
+  background-color: #a3ee5d;
+}
+
+/* =========================================================
+   BLOCO 5: TABELA DE HISTÓRICO (DENTRO DA GAVETA)
+   ========================================================= */
+/* Permite rolagem horizontal caso a tabela fique mais larga que a tela */
+.tabela-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Define a largura e as cores de fundo da tabela de registros */
+.tabela-historico {
+  width: 90%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: #94c1bc;
+  color: rgb(14, 9, 9);
+}
+
+/* Cria bordas amarelas entre as células e define o espaçamento interno */
+.tabela-historico th, .tabela-historico td {
+  border: 1px solid #faf757;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 0;
+}
+
+/* Destaca a linha de cabeçalho da tabela em tom salmão/laranja */
+.tabela-historico th {
+  background-color: #ec825c;
+}
+
+/* =========================================================
+   BLOCO 6: EFEITO DE FOCO E DESFOQUE (MODO INTERATIVO)
+   ========================================================= */
+/* Prepara os elementos da tela para esmaecerem/desfocarem suavemente */
+body > *:not(.tabela-medidores):not(.sidebar):not(.menu-btn),
+.tabela-medidores td {
+  transition: filter 0.35s ease, opacity 0.35s ease;
+}
+
+/* Traz o medidor clicado (.ativo) para uma camada superior */
+.tabela-medidores td.ativo {
+  z-index: 950;
+}
+
+/* Quando o JS adiciona a classe '.modo-foco' no body, tudo na página fica borrado e semi-transparente, EXCETO o medidor que está ativo */
+body.modo-foco > *:not(.tabela-medidores):not(.sidebar):not(.menu-btn),
+body.modo-foco .tabela-medidores td:not(.ativo) {
+  filter: blur(5px);
+  opacity: 0.5;
+}
+
+/* Adiciona uma sombra projetada profunda no medidor selecionado para dar efeito de destaque */
+.tabela-medidores td.ativo canvas {
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.35));
+}
+
+/* =========================================================
+   BLOCO 7: RESPONSIVIDADE (TELAS ATÉ 600px / CELULARES)
+   ========================================================= */
+@media (max-width: 600px) {
+  /* Transforma células de tabela em blocos empilhados (muda de 2x2 para 1 coluna vertical) */
+  .tabela-medidores,
+  .tabela-medidores tbody,
+  .tabela-medidores tr,
+  .tabela-medidores td {
+    display: block;
+    width: 100%;
+  }
+
+  .tabela-medidores td {
+    padding: 10px 0;
+  }
+
+  /* Reduz levemente o tamanho dos relógios no celular */
+  .tabela-medidores canvas {
+    width: 200px !important;
+  }
+
+  /* Garante que a gaveta lateral nunca passe da largura da tela do aparelho */
+  .sidebar {
+    max-width: 100vw;
+  }
+
+  .tabela-container {
+    padding: 0 10px;
+  }
+
+  /* Ajusta a tabela de histórico para caber sem apertar demais os textos */
+  .tabela-historico {
+    width: 100%;
+  }
+
+  .tabela-historico th,
+  .tabela-historico td {
+    font-size: 12px;
+    padding: 6px 4px;
+  }
+}

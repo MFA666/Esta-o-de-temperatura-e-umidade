@@ -1,0 +1,97 @@
+<!-- Define que o documento segue o padrão HTML5 e configura o idioma como Português do Brasil -->
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<!-- BLOCO 1: CABEÇALHO DE CONFIGURAÇÃO (INVISÍVEL NA TELA) -->
+<head>
+    <!-- Define a codificação de caracteres (permite acentos e símbolos como °C) -->
+    <meta charset="utf-8">
+    <!-- Ajusta a escala da página para funcionar corretamente em celulares e tablets (responsividade) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título que aparece na aba do navegador -->
+    <title>Monitoramento</title>
+
+    <!-- Pré-conexão e importação de fontes personalizadas do Google Fonts (Gloria Hallelujah e Playfair) -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Gloria+Hallelujah&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
+
+    <!-- Vincula o arquivo CSS externo que controla cores, tamanhos e o layout da página -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<!-- BLOCO 2: CORPO DA PÁGINA (TUDO QUE É VISÍVEL AO USUÁRIO) -->
+<body>
+
+    <!-- Botão flutuante no canto (ícone ☰) que chama a função JS 'toggleMenu()' para abrir/fechar o histórico -->
+    <button class="menu-btn" onclick="toggleMenu()" title="Histórico (10 dias)">☰</button>
+
+    <!-- BLOCO 3: MENU LATERAL (GAVETA DE HISTÓRICO) -->
+    <div id="sidebar" class="sidebar">
+        <!-- Botão 'X' para fechar o menu lateral -->
+        <a href="javascript:void(0)" class="close-btn" onclick="toggleMenu()">&times;</a>
+        <h2>Histórico - Últimos 10 Dias</h2>
+        <!-- Botão que aciona a função JS para registrar os dados atuais na tabela -->
+        <button class="btn-salvar" onclick="salvarLeituraHoje()">+ Salvar Leitura Atual</button>
+
+        <!-- Estrutura da tabela que exibe os registros salvos -->
+        <div class="tabela-container">
+            <table class="tabela-historico">
+                <thead> <!-- Cabeçalho fixo das colunas -->
+                    <tr>
+                        <th>Data</th>
+                        <th>Temp. (°C)</th>
+                        <th>Umid. (%)</th>
+                        <th>Vento (Km/h)</th>
+                        <th>Chuva (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-historico">
+                    <!-- Corpo vazio: o JavaScript insere as linhas de dados aqui dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Título principal exibido no topo do painel -->
+    <h1 class="titulo-principal">Estação de monitoramento</h1>
+
+    <!-- BLOCO 4: PAINEL DE MEDIDORES ANALÓGICOS (GAUGES) -->
+    <!-- Organiza os 4 relógios em uma grade (2 colunas x 2 linhas) -->
+    <table class="tabela-medidores">
+
+        <!-- Primeira linha: Temperatura e Umidade -->
+        <tr>
+            <td>
+                <!-- Elemento <canvas> desenha o mostrador gráfico via JS. Os atributos 'data-*' configuram escala, unidade e faixas de cores -->
+                <canvas id="an_gauge_1" data-title="Temperatura" data-units="&deg;C" width="230" height="230" data-major-ticks="-20 -10 0 10 20 30 40 50 60 70" data-type="canv-gauge" data-min-value="-20" data-max-value="70" data-highlights="-20 0 #4D89F2, 0 10 #25B8D9, 10 30 #0BB950, 30 40 #cc5, 40 70 #f33">
+                </canvas>
+            </td>
+            <td>
+                <canvas id="an_gauge_2" data-title="Umidade" data-units="%" width="230" height="230" data-major-ticks="0 10 20 30 40 50 60 70 80 90" data-type="canv-gauge" data-min-value="0" data-max-value="90" data-highlights="0 12 #ff0000, 12 20 #ff4500, 20 30 #ffff00, 30 40 #90ee90, 40 60 #00bfff, 60 90 #0000ff">
+                </canvas>
+            </td>
+        </tr>
+
+        <!-- Segunda linha: Vento e Probabilidade de Chuva -->
+        <tr>
+            <td>
+                <canvas id="an_gauge_3" data-title="Vento" data-units="Km/h" width="230" height="230" data-major-ticks="0 10 20 30 40 50 60 70 80 90" data-type="canv-gauge" data-min-value="0" data-max-value="90" data-highlights="0 20 #00ff00, 20 40 #0000ff, 40 60 #ff0000, 60 90 #a47dab">
+                </canvas>
+            </td>
+            <td>
+                <canvas id="an_gauge_4" data-title="Prob. Chuva" data-units="%" width="230" height="230" data-major-ticks="0 10 20 30 40 50 60 70 80 90 100" data-type="canv-gauge" data-min-value="0" data-max-value="100" data-highlights="0 30 #90ee90, 30 60 #ffff00, 60 80 #00bfff, 80 100 #0000ff">
+                </canvas>
+            </td>
+        </tr>
+    </table>
+
+    <!-- BLOCO 5: RODAPÉ E SCRIPTS -->
+    <!-- Espaço reservado onde o JavaScript exibe o relógio e a data em tempo real -->
+    <div class="data-hora"><span id="datetime"></span></div>
+
+    <!-- Carrega o arquivo JavaScript responsável por desenhar os ponteiros, atualizar a hora e gerenciar o histórico -->
+    <script src="js/script.js"></script>
+</body>
+
+</html>
